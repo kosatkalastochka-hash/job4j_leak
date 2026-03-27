@@ -16,24 +16,26 @@ public class UserGenerator implements Generate {
     public static final String SEPARATOR = " ";
     public static final Integer NEW_USERS = 1000;
 
-    public static List<String> names;
-    public static List<String> surnames;
-    public static List<String> patrons;
-    private static final List<User> USERS = new ArrayList<>();
+    public List<String> names;
+    public List<String> surnames;
+    public List<String> patrons;
+    private final List<User> USERS = new ArrayList<>();
     private final Random random;
 
     public UserGenerator(Random random) {
         this.random = random;
-        readAll();
     }
 
     @Override
     public void generate() {
-        USERS.clear();
+        readAll();
+        int surnamesSize = surnames.size();
+        int namesSize = names.size();
+        int patronsSize = patrons.size();
         for (int i = 0; i < NEW_USERS; i++) {
-            var name = surnames.get(random.nextInt(surnames.size())) + SEPARATOR
-                    + names.get(random.nextInt(names.size())) + SEPARATOR
-                    + patrons.get(random.nextInt(patrons.size()));
+            var name = surnames.get(random.nextInt(surnamesSize)) + SEPARATOR
+                    + names.get(random.nextInt(namesSize)) + SEPARATOR
+                    + patrons.get(random.nextInt(patronsSize));
             var user = new User();
             user.setName(name);
             USERS.add(user);
@@ -48,6 +50,10 @@ public class UserGenerator implements Generate {
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public List<User> getUSERS() {
+        return USERS;
     }
 
     public User randomUser() {

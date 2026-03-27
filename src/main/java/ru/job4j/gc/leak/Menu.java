@@ -2,6 +2,7 @@ package ru.job4j.gc.leak;
 
 import ru.job4j.gc.leak.models.Post;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -44,11 +45,10 @@ public class Menu {
             if (ADD_POST == userChoice) {
                 System.out.println(TEXT_OF_POST);
                 String text = scanner.nextLine();
-                userGenerator.generate();
-                commentGenerator.generate();
+                ensureDataLoaded(userGenerator, commentGenerator);
                 var post = new Post();
                 post.setText(text);
-                post.setComments(CommentGenerator.getComments());
+                post.setComments(new ArrayList<>(commentGenerator.getComments()));
                 var saved = postStore.add(post);
                 System.out.println("Generate: " + saved.getId());
             } else if (ADD_MANY_POST == userChoice) {
@@ -57,16 +57,18 @@ public class Menu {
                 System.out.println(COUNT);
                 String count = scanner.nextLine();
                 memUsage();
-                for (int i = 0; i < Integer.parseInt(count); i++) {
+                ensureDataLoaded(userGenerator, commentGenerator);
+                int postsCount = Integer.parseInt(count);
+                for (int i = 0; i < postsCount; i++) {
                     System.out.printf("\rGenerate %.2f%% %.2fMb",
-                            ((double) i / Integer.parseInt(count)) * 100,
+                            ((double) i / postsCount) * 100,
                             memUsage());
-                    createPost(commentGenerator, userGenerator, postStore, text);
+                    createPost(commentGenerator, postStore, text);
                 }
                 System.out.println();
                 memUsage();
             } else if (SHOW_ALL_POSTS == userChoice) {
-                System.out.println(PostStore.getPosts());
+                System.out.println( postStore.getPosts());
             } else if (DELETE_POST == userChoice) {
                 System.out.println("Удаление всех постов ...");
                 postStore.removeAll();
@@ -86,13 +88,20 @@ public class Menu {
     }
 
     private static void createPost(CommentGenerator commentGenerator,
-                                   UserGenerator userGenerator,
                                    PostStore postStore, String text) {
-        userGenerator.generate();
-        commentGenerator.generate();
         var post = new Post();
         post.setText(text);
-        post.setComments(CommentGenerator.getComments());
+        post.setComments(new ArrayList<>(commentGenerator.getComments()));
         postStore.add(post);
+    }
+
+    private static void ensureDataLoaded(UserGenerator userGenerator,
+                                         CommentGenerator commentGenerator) {
+        if (userGenerator.getUSERS().isEmpty()) {
+            userGenerator.generate();
+        }
+        if (commentGenerator.getComments().isEmpty()) {
+            commentGenerator.generate();
+        }
     }
 }
