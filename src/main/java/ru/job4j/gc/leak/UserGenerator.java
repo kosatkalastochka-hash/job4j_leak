@@ -34,6 +34,7 @@ public class UserGenerator implements Generate {
         int patronsSize = patrons.size();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < NEW_USERS; i++) {
+            sb.setLength(0);
             sb.append(surnames.get(random.nextInt(surnamesSize)));
             sb.append(SEPARATOR);
             sb.append(names.get(random.nextInt(namesSize)));
