@@ -32,10 +32,14 @@ public class UserGenerator implements Generate {
         int surnamesSize = surnames.size();
         int namesSize = names.size();
         int patronsSize = patrons.size();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < NEW_USERS; i++) {
-            var name = surnames.get(random.nextInt(surnamesSize)) + SEPARATOR
-                    + names.get(random.nextInt(namesSize)) + SEPARATOR
-                    + patrons.get(random.nextInt(patronsSize));
+            sb.append(surnames.get(random.nextInt(surnamesSize)));
+            sb.append(SEPARATOR);
+            sb.append(names.get(random.nextInt(namesSize)));
+            sb.append(SEPARATOR);
+            sb.append(patrons.get(random.nextInt(patronsSize)));
+            var name =sb.toString();
             var user = new User();
             user.setName(name);
             USERS.add(user);
